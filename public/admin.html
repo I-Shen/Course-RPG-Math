@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Master Console - Pixel Math RPG</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="admin-container">
+    
+    <!-- Admin Header JRPG Window -->
+    <div class="jrpg-window admin-header">
+      <div>
+        <h1 style="color: var(--text-yellow); font-size: 14px;">👑 GAME MASTER CONSOLE (ADMIN)</h1>
+        <span style="font-size: 8px; color: var(--text-gray);">Kelola Akun Siswa & Bank Soal Matematika RPG</span>
+      </div>
+      <div>
+        <button class="jrpg-btn" onclick="logout()" style="border-color: var(--text-red);">LOGOUT CONSOLE</button>
+      </div>
+    </div>
+
+    <div class="admin-grid">
+      <!-- 1. Kiri: Monitoring Siswa & Pendaftaran -->
+      <div class="jrpg-window">
+        <h2 style="font-size: 10px; color: var(--text-yellow); margin-bottom: 15px; border-bottom: 2px dashed #444; padding-bottom: 8px;">
+          👥 MONITORING SISWA
+        </h2>
+
+        <!-- Form Tambah Murid -->
+        <form id="add-student-form" style="margin-bottom: 20px;">
+          <h3 style="font-size: 8px; margin-bottom: 8px; color: var(--text-yellow);">BUAT AKUN SISWA BARU</h3>
+          
+          <div class="login-input-group" style="margin-bottom: 10px;">
+            <label for="new-student-name">USERNAME SISWA</label>
+            <input type="text" id="new-student-name" required placeholder="Contoh: andi123" style="padding: 6px;">
+          </div>
+          <div class="login-input-group" style="margin-bottom: 10px;">
+            <label for="new-student-pass">PASSWORD AKSES</label>
+            <input type="password" id="new-student-pass" required placeholder="Contoh: andi123" style="padding: 6px;">
+          </div>
+          
+          <button type="submit" class="jrpg-btn" style="width: 100%; justify-content: center; font-size: 7px; padding: 6px;">
+            DAFTARKAN SISWA
+          </button>
+        </form>
+
+        <!-- List Murid Terdaftar -->
+        <h3 style="font-size: 8px; margin-bottom: 8px; color: var(--text-gray);">SISWA TERDAFTAR (PROGRESS):</h3>
+        <div class="admin-student-list" id="students-list-container">
+          <!-- Diisi dinamis -->
+        </div>
+      </div>
+
+      <!-- 2. Kanan: CRUD Bank Soal JRPG -->
+      <div class="jrpg-window">
+        <h2 style="font-size: 10px; color: var(--text-yellow); margin-bottom: 15px; border-bottom: 2px dashed #444; padding-bottom: 8px;">
+          ⚔️ BANK SOAL JRPG EDITOR
+        </h2>
+
+        <!-- Form Editor Soal -->
+        <form id="question-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; border-bottom: 2px dashed #444; padding-bottom: 20px;">
+          <input type="hidden" id="edit-question-id">
+          
+          <div class="login-input-group" style="grid-column: span 2;">
+            <label for="q-text">TEKS PERTANYAAN (SOAL MATEMATIKA)</label>
+            <input type="text" id="q-text" required placeholder="Tuliskan soal disini...">
+          </div>
+
+          <div class="login-input-group">
+            <label for="q-chapter">PILIH BAB / CHAPTER</label>
+            <select id="q-chapter">
+              <option value="ch1">[SD] Bab 1: Operasi Dasar Bilangan</option>
+              <option value="ch2">[SD] Bab 2: Pecahan Sederhana</option>
+              <option value="ch3">[SMP] Bab 3: Persamaan Linear</option>
+              <option value="ch4">[SMP] Bab 4: Aritmatika Sosial</option>
+              <option value="ch5">[SMA] Bab 5: Trigonometri Dasar</option>
+              <option value="ch6">[SMA] Bab 6: Limit & Turunan</option>
+              <option value="ch7">[College] Bab 7: Matriks & OBE</option>
+              <option value="ch8">[College] Bab 8: PD Biasa</option>
+            </select>
+          </div>
+
+          <div class="login-input-group">
+            <label for="q-effect">PILIH EFEK STATUS MONSTER</label>
+            <select id="q-effect">
+              <option value="none">Normal (Tidak ada efek)</option>
+              <option value="poison">Poison (HP Siswa berkurang berkala)</option>
+              <option value="blind">Blind (Pilihan jawaban buram)</option>
+              <option value="silence">Silence (Teks soal dikaburkan)</option>
+            </select>
+          </div>
+
+          <div class="login-input-group">
+            <label for="q-opt0">PILIHAN GANDA A</label>
+            <input type="text" id="q-opt0" required placeholder="Jawaban A">
+          </div>
+          <div class="login-input-group">
+            <label for="q-opt1">PILIHAN GANDA B</label>
+            <input type="text" id="q-opt1" required placeholder="Jawaban B">
+          </div>
+          <div class="login-input-group">
+            <label for="q-opt2">PILIHAN GANDA C</label>
+            <input type="text" id="q-opt2" placeholder="Jawaban C (Opsional)">
+          </div>
+          <div class="login-input-group">
+            <label for="q-opt3">PILIHAN GANDA D</label>
+            <input type="text" id="q-opt3" placeholder="Jawaban D (Opsional)">
+          </div>
+
+          <div class="login-input-group">
+            <label for="q-answer">PILIH JAWABAN BENAR</label>
+            <select id="q-answer">
+              <option value="0">Pilihan A</option>
+              <option value="1">Pilihan B</option>
+              <option value="2">Pilihan C</option>
+              <option value="3">Pilihan D</option>
+            </select>
+          </div>
+
+          <div class="login-input-group">
+            <label for="q-limit">BATAS WAKTU (DETIK)</label>
+            <input type="number" id="q-limit" required value="20" min="5">
+          </div>
+
+          <div class="login-input-group" style="grid-column: span 2;">
+            <label for="q-explain">PENJELASAN KUNCI JAWABAN (LANGKAH JRPG)</label>
+            <input type="text" id="q-explain" required placeholder="Tuliskan langkah pengerjaan untuk mendidik siswa...">
+          </div>
+
+          <div class="login-input-group" style="grid-column: span 2;">
+            <label for="q-ai-fallback">MODEL CADANGAN LOKAL (FALLBACK JIKA GEMINI LIMIT)</label>
+            <select id="q-ai-fallback">
+              <option value="llama3">Ollama: Llama 3 (Offline - Bahasa Indonesia Natural)</option>
+              <option value="phi3">Ollama: Phi-3 (Offline - Cepat &amp; Hemat VRAM)</option>
+            </select>
+          </div>
+
+          <div style="grid-column: span 2; display: flex; gap: 10px;">
+            <button type="submit" class="jrpg-btn" style="flex: 1; justify-content: center; border-color: var(--text-green);" id="save-btn">
+              SIMPAN SOAL
+            </button>
+            <button type="button" class="jrpg-btn" style="border-color: var(--text-yellow); flex: 1; justify-content: center;" onclick="generateQuestionWithAI()" id="ai-gen-btn">
+              🤖 GENERATE DENGAN AI
+            </button>
+            <button type="button" class="jrpg-btn" style="border-color: var(--text-red);" onclick="resetQuestionForm()">
+              BATAL
+            </button>
+          </div>
+        </form>
+
+        <!-- List Daftar Soal Matematika -->
+        <h3 style="font-size: 8px; margin-bottom: 10px; color: var(--text-gray);">
+          DAFTAR SOAL TERDAFTAR (DI KOTA PETUALANGAN):
+        </h3>
+
+        <!-- Filter Klasifikasi Soal -->
+        <div style="display: flex; gap: 10px; margin-bottom: 12px; background: rgba(0,0,0,0.5); padding: 8px; border: 1px solid #444; border-radius: 4px;">
+          <div class="login-input-group" style="flex: 1; margin-bottom: 0;">
+            <label for="filter-chapter" style="font-size: 6px; margin-bottom: 2px; color: var(--text-yellow);">SARING BAB / TINGKAT</label>
+            <select id="filter-chapter" onchange="applyFilters()" style="padding: 4px; font-size: 7px; background: #000; color: #fff; border: 1px solid var(--jrpg-border-color); cursor: pointer; width: 100%;">
+              <option value="all">Semua Bab / Tingkat</option>
+              <option value="ch1">[SD] Bab 1: Operasi Dasar Bilangan</option>
+              <option value="ch2">[SD] Bab 2: Pecahan Sederhana</option>
+              <option value="ch3">[SMP] Bab 3: Persamaan Linear</option>
+              <option value="ch4">[SMP] Bab 4: Aritmatika Sosial</option>
+              <option value="ch5">[SMA] Bab 5: Trigonometri Dasar</option>
+              <option value="ch6">[SMA] Bab 6: Limit & Turunan</option>
+              <option value="ch7">[College] Bab 7: Matriks & OBE</option>
+              <option value="ch8">[College] Bab 8: PD Biasa</option>
+            </select>
+          </div>
+          <div class="login-input-group" style="flex: 1; margin-bottom: 0;">
+            <label for="filter-effect" style="font-size: 6px; margin-bottom: 2px; color: var(--text-yellow);">SARING EFEK STATUS</label>
+            <select id="filter-effect" onchange="applyFilters()" style="padding: 4px; font-size: 7px; background: #000; color: #fff; border: 1px solid var(--jrpg-border-color); cursor: pointer; width: 100%;">
+              <option value="all">Semua Efek</option>
+              <option value="none">Normal (None)</option>
+              <option value="poison">Poison</option>
+              <option value="blind">Blind</option>
+              <option value="silence">Silence</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="questions-list-container" style="max-height: 250px; overflow-y: auto; border: 2px solid var(--jrpg-border-color); padding: 8px; background: #000; display: flex; flex-direction: column; gap: 8px;">
+          <!-- Diisi dinamis -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="sound.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Town Hub - Pixel Math RPG</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ==================== SCREEN TRANSITION SWIRL ==================== -->
+  <div id="screen-transition-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; pointer-events: none;"></div>
+
+  <!-- ==================== TOWN HUB (MAIN INTERFACE) ==================== -->
+  <div class="town-container" id="town-interface">
+    
+    <!-- Header Status JRPG -->
+    <div class="jrpg-window town-header">
+      <div>
+        <span id="header-username" style="color: var(--text-yellow); font-size: 12px;">PLAYER</span> 
+        <span id="header-title" style="color: var(--text-gray); font-size: 8px; margin-left: 8px;">[Title]</span>
+      </div>
+      
+      <div class="user-quickstats">
+        <span>LV: <b id="header-lv" style="color: var(--text-yellow);">1</b></span>
+        <span>HP: <b id="header-hp" style="color: var(--text-green);">100/100</b></span>
+        <span>GOLD: <b id="header-gold" style="color: var(--text-yellow);">150</b> 💰</span>
+        <span>STREAK: <b id="header-streak" style="color: #ff8800;">1</b> 🔥</span>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button class="jrpg-btn" onclick="openRedeemModal()" style="padding: 4px 8px; font-size: 7px;">REDEEM</button>
+        <button class="jrpg-btn" onclick="toggleMuteAudio()" id="mute-btn" style="padding: 4px 8px; font-size: 7px;">🔊 MUTE</button>
+        <button class="jrpg-btn" onclick="logout()" style="padding: 4px 8px; font-size: 7px; border-color: var(--text-red);">LOGOUT</button>
+      </div>
+    </div>
+
+    <!-- Map Kota 2D JRPG Town Map (3/4 Orthographic Perspective) -->
+    <div class="town-map-wrapper">
+      <div class="town-map-plane">
+        
+        <!-- Paved roads/streets to match JRPG screenshot layout -->
+        <div class="town-road horizontal-road" style="top: 55%;"></div>
+        <div class="town-road vertical-road" style="left: 25%;"></div>
+        <div class="town-road vertical-road" style="left: 75%;"></div>
+        
+        <!-- Recessed JRPG River/Canal with brick shadows -->
+        <div class="town-river">
+          <div class="river-bridge" style="left: 25%;"></div>
+          <div class="river-bridge" style="left: 75%;"></div>
+        </div>
+        
+        <!-- White wooden fences to match the screenshot -->
+        <div class="town-fence" style="top: 50%; left: 8%;">🔏🔏🔏</div>
+        <div class="town-fence" style="top: 50%; left: 35%;">🔏🔏🔏</div>
+        <div class="town-fence" style="top: 50%; left: 62%;">🔏🔏🔏</div>
+        
+        <!-- Volumetric 2.5D Trees (Layered Crown & Shadow) -->
+        <div class="jrpg-tree" style="top: 5%; left: 8%;">
+          <div class="tree-shadow"></div>
+          <div class="tree-trunk"></div>
+          <div class="tree-crown"></div>
+        </div>
+        <div class="jrpg-tree" style="top: 15%; left: 18%;">
+          <div class="tree-shadow"></div>
+          <div class="tree-trunk"></div>
+          <div class="tree-crown"></div>
+        </div>
+        <div class="jrpg-tree" style="top: 4%; left: 60%;">
+          <div class="tree-shadow"></div>
+          <div class="tree-trunk"></div>
+          <div class="tree-crown"></div>
+        </div>
+        <div class="jrpg-tree" style="top: 10%; left: 88%;">
+          <div class="tree-shadow"></div>
+          <div class="tree-trunk"></div>
+          <div class="tree-crown"></div>
+        </div>
+        <div class="jrpg-tree" style="top: 75%; left: 5%;">
+          <div class="tree-shadow"></div>
+          <div class="tree-trunk"></div>
+          <div class="tree-crown"></div>
+        </div>
+        <div class="jrpg-tree" style="top: 82%; left: 18%;">
+          <div class="tree-shadow"></div>
+          <div class="tree-trunk"></div>
+          <div class="tree-crown"></div>
+        </div>
+        <div class="jrpg-tree" style="top: 75%; left: 85%;">
+          <div class="tree-shadow"></div>
+          <div class="tree-trunk"></div>
+          <div class="tree-crown"></div>
+        </div>
+
+        <!-- Central fountain -->
+        <div class="town-fountain">
+          <div class="fountain-water"></div>
+        </div>
+
+        <!-- NPC Karakter Petualang yang Berjalan (Membuat Kota Ber-Nyawa) -->
+        <div class="npc-character npc-warrior" id="npc-moving-1">
+          <div class="npc-hair"></div>
+          <div class="npc-head"></div>
+          <div class="npc-body"></div>
+        </div>
+        <div class="npc-character npc-mage" id="npc-moving-2">
+          <div class="npc-hair"></div>
+          <div class="npc-head"></div>
+          <div class="npc-body"></div>
+        </div>
+
+        <!-- BUILDINGS (Gedung Volumetrik JRPG 3/4 Perspective) -->
+        
+        <!-- 1. Adventure Gate (Top Center Castle / Istana Kerajaan) -->
+        <div class="building building-adventure" onclick="openAdventureModal()">
+          <div class="jrpg-castle">
+            <div class="castle-towers">
+              <div class="tower left-tower"><div class="tower-roof"></div></div>
+              <div class="tower right-tower"><div class="tower-roof"></div></div>
+            </div>
+            <div class="castle-body">
+              <div class="castle-gate"></div>
+            </div>
+          </div>
+          <div class="building-label">ADVENTURE CASTLE</div>
+        </div>
+
+        <!-- 2. Co-Op Tavern (Center Right Tavern / Kedai Kayu) -->
+        <div class="building building-tavern" onclick="openTavernModal()">
+          <div class="jrpg-house tavern-style">
+            <div class="house-roof"></div>
+            <div class="house-body">
+              <div class="house-door"></div>
+              <div class="house-window"></div>
+              <div class="house-sign">🍻</div>
+            </div>
+          </div>
+          <div class="building-label">CO-OP TAVERN</div>
+        </div>
+
+        <!-- 3. Shop & Gacha (Bottom Right Shop / Toko Kubah Emas) -->
+        <div class="building building-shop" onclick="openShopModal()">
+          <div class="jrpg-house shop-style">
+            <div class="house-roof" style="border-radius: 50% 50% 0 0; background: #e2e8f0;"></div>
+            <div class="house-body" style="background: #fbbf24;">
+              <div class="house-door"></div>
+              <div class="house-window"></div>
+              <div class="house-sign">🪙</div>
+            </div>
+          </div>
+          <div class="building-label">SHOP & GACHA</div>
+        </div>
+
+        <!-- 4. Library (Top Left Temple / Kuil Ilmu) -->
+        <div class="building building-library" onclick="openLibraryModal()">
+          <div class="jrpg-house library-style">
+            <div class="house-roof" style="background: #3b82f6;"></div>
+            <div class="house-body" style="background: #f1f5f9;">
+              <div class="house-door" style="border-radius: 0;"></div>
+              <div class="house-window"></div>
+              <div class="house-sign">📖</div>
+            </div>
+          </div>
+          <div class="building-label">THE LIBRARY</div>
+        </div>
+
+        <!-- 5. Inn (Bottom Left Inn / Rumah Penginapan) -->
+        <div class="building building-inn" onclick="restAtInn()">
+          <div class="jrpg-house inn-style">
+            <div class="house-roof"></div>
+            <div class="house-body">
+              <div class="house-door"></div>
+              <div class="house-window"></div>
+              <div class="house-sign">🛌</div>
+            </div>
+          </div>
+          <div class="building-label">TOWN INN</div>
+        </div>
+
+        <!-- 6. Guild Quest Board (Center Left Board / Papan Misi) -->
+        <div class="building building-guild" onclick="openGuildModal()">
+          <div class="jrpg-board-post">
+            <div class="board-frame">📋</div>
+            <div class="board-legs"></div>
+          </div>
+          <div class="building-label">GUILD BOARD</div>
+        </div>
+
+        <!-- Ancient Runes (Easter Eggs) - Faded math/physics formulas scattered around Solaria -->
+        <div class="ancient-rune" style="top: 56%; left: 15%;" onclick="discoverSecretRune('Pythagoras Rune', 'a² + b² = c²', 'Teorema Pythagoras: Sisi miring kuadrat sama dengan jumlah kuadrat kedua sisi siku-sikunya.')" title="Ukiran Kuno">a²+b²=c²</div>
+        <div class="ancient-rune" style="top: 56%; left: 43%;" onclick="discoverSecretRune('Pi Rune', 'π ≈ 3.14159', 'Konstanta Pi: Perbandingan keliling lingkaran dengan diameternya.')" title="Ukiran Kuno">π</div>
+        <div class="ancient-rune" style="top: 56%; left: 60%;" onclick="discoverSecretRune('Relativity Rune', 'E = mc²', 'Teori Relativitas Khusus: Energi sama dengan massa dikali kuadrat kecepatan cahaya.')" title="Ukiran Kuno">E=mc²</div>
+        <div class="ancient-rune" style="top: 25%; left: 26%;" onclick="discoverSecretRune('Newton Rune', 'F = m · a', 'Hukum Newton II: Gaya yang bekerja pada suatu benda berbanding lurus dengan massa dan percepatannya.')" title="Ukiran Kuno">F=m·a</div>
+        <div class="ancient-rune" style="top: 80%; left: 76%;" onclick="discoverSecretRune('Calculus Rune', '∫ x dx = ½x² + C', 'Integral Tak Tentu: Fondasi utama dalam kalkulus untuk mencari luas di bawah kurva.')" title="Ukiran Kuno">∫</div>
+        <div class="ancient-rune" style="top: 38%; left: 5%;" onclick="discoverSecretRune('Wave Rune', 'λ = h/p', 'Dualitas Partikel-Gelombang De Broglie: Setiap materi memiliki sifat gelombang dengan panjang gelombang berbanding terbalik dengan momentumnya.')" title="Ukiran Kuno">λ=h/p</div>
+      </div>
+
+      <!-- Floating 2D HUD Minimap (Top Right) -->
+      <div class="jrpg-window town-minimap">
+        <div class="minimap-title">TOWN MAP</div>
+        <div style="font-size: 6px; color: var(--text-yellow); text-align: center; margin-bottom: 5px;">Solaria</div>
+        <div style="display: flex; justify-content: space-around; font-size: 8px;">
+          <span>🏰</span>
+          <span>🍻</span>
+          <span>🛌</span>
+        </div>
+      </div>
+
+      <!-- Easter Egg Dialogue Window -->
+      <div id="rune-dialog" class="jrpg-window rune-dialog-box" style="display: none;">
+        <div class="rune-dialog-header">
+          <span style="color: var(--text-yellow);">✨ ANCIENT RUNE DISCOVERED! ✨</span>
+          <span class="rune-dialog-close" onclick="closeRuneDialog()">✖</span>
+        </div>
+        <div class="rune-dialog-content">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <div style="background: rgba(0,0,0,0.5); border: 1.5px solid var(--jrpg-border-color); padding: 4px; border-radius: 4px;">
+              <span style="font-size: 14px; color: gold;">🔮</span>
+            </div>
+            <div>
+              <div id="rune-dialog-formula" style="font-size: 8px; font-weight: bold; color: var(--text-green);">Formula</div>
+              <div id="rune-dialog-name" style="font-size: 6px; color: var(--text-gray);">Nama Rune</div>
+            </div>
+          </div>
+          <div id="rune-dialog-desc" style="font-size: 7px; line-height: 1.5; color: var(--text-primary);">Deskripsi penemuan...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== BATTLE ARENA MODE ==================== -->
+  <div class="battle-container" id="battle-interface">
+    <div class="poison-pulse-screen" id="poison-overlay" style="display: none;"></div>
+    
+    <!-- Render Pertarungan JRPG 2D -->
+    <canvas class="battle-screen-canvas" id="battle-canvas" width="800" height="250"></canvas>
+
+    <!-- Papan Soal & Jawaban (3-Panel HUD) -->
+    <div class="battle-hud">
+      
+      <!-- Panel 1 (Kiri): Command Menu -->
+      <div class="jrpg-window battle-command-panel">
+        <ul class="battle-commands-list">
+          <li class="active-command" id="cmd-attack" onclick="selectBattleCommand('attack')">
+            <span class="jrpg-finger-cursor">👉</span>ATTACK
+          </li>
+          <li id="cmd-items" onclick="selectBattleCommand('items')">
+            <span class="jrpg-finger-cursor" style="visibility: hidden;">👉</span>ITEMS
+          </li>
+          <li id="cmd-flee" onclick="selectBattleCommand('flee')">
+            <span class="jrpg-finger-cursor" style="visibility: hidden;">👉</span>FLEE
+          </li>
+        </ul>
+      </div>
+
+      <!-- Panel 2 (Tengah): Soal, Pilihan Ganda & Bar Waktu -->
+      <div class="jrpg-window battle-action-panel">
+        <!-- Area Pertanyaan (Soal Matematika) -->
+        <div id="battle-question-area">
+          <div style="font-size: 6px; color: var(--text-yellow); margin-bottom: 6px; display: flex; justify-content: space-between;">
+            <span>SOAL - <span id="battle-chapter-title">N/A</span></span>
+            <span id="timer-text" style="color: var(--text-yellow);">0s</span>
+          </div>
+          
+          <!-- Bar Sisa Waktu di dalam panel tengah -->
+          <div class="bar-container" style="height: 6px; margin-bottom: 8px;">
+            <div class="timer-bar-fill" id="timer-bar" style="width: 100%;"></div>
+          </div>
+          
+          <div class="question-text" id="question-box" style="font-size: 8px; line-height: 1.5; min-height: 25px; margin-bottom: 10px;">Loading Soal...</div>
+          
+          <div class="choices-grid" id="choices-container">
+            <!-- Tombol Pilihan Ganda diisi dinamis oleh game.js -->
+          </div>
+        </div>
+
+        <!-- Area Items (Inventory Dialog) -->
+        <div id="battle-item-area" style="display: none;">
+          <div style="font-size: 7px; color: var(--text-yellow); margin-bottom: 6px;">TAS PERLENGKAPAN</div>
+          <div style="font-size: 8px; line-height: 1.6; color: var(--text-gray); min-height: 50px;">
+            Tidak ada potion aktif saat ini!<br>Pulihkan HP Anda di Town Inn.
+          </div>
+          <div style="text-align: right; margin-top: 8px;">
+            <button class="jrpg-btn" onclick="selectBattleCommand('attack')" style="padding: 3px 8px; font-size: 6px;">KEMBALI</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 3 (Kanan): Status Tim / Party HP & Level -->
+      <div class="jrpg-window battle-status-panel">
+        <div class="status-header" style="font-size: 6px; color: var(--text-yellow); margin-bottom: 6px; display: flex; justify-content: space-between;">
+          <span>NAMA ANGGOTA</span>
+          <span>HP</span>
+        </div>
+        <div id="battle-party-list" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Diisi secara dinamis oleh game.js (mendukung Solo & Co-Op) -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== PHOENIX DOWN / RESCUE SHIELD OVERLAY ==================== -->
+  <div class="modal-overlay" id="rescue-overlay">
+    <div class="jrpg-window modal-content" style="border-color: var(--text-red);">
+      <div class="modal-header" style="color: var(--text-red);">
+        <span>💀 DEFEAT IMMINENT! (RESCUE SHIELD ACTIVE) 💀</span>
+      </div>
+      
+      <p style="font-size: 8px; margin-bottom: 15px; line-height: 1.6; text-align: center;">
+        HP Anda habis! Tetapi perisai penyelamat diaktifkan. Jawab satu **SOAL PENYELAMAT** (Soal Tingkat Dasar) di bawah untuk bangkit kembali!
+      </p>
+
+      <div class="jrpg-window" style="background: rgba(0,0,0,0.6); padding: 12px; margin-bottom: 15px;">
+        <div id="rescue-question-box" style="font-size: 10px; line-height: 1.6; margin-bottom: 12px;">Loading Soal Penyelamat...</div>
+        <div class="choices-grid" id="rescue-choices-container"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== MODALS IN TOWN HUB ==================== -->
+
+  <!-- A. Adventure Portal Modal -->
+  <div class="modal-overlay" id="adventure-modal">
+    <div class="jrpg-window modal-content">
+      <div class="modal-header">
+        <span>🏰 GERBANG PETUALANGAN JRPG</span>
+        <span class="modal-close" onclick="closeModal('adventure-modal')">✖</span>
+      </div>
+      <p style="font-size: 8px; color: var(--text-gray); margin-bottom: 15px;">
+        Pilih tingkat pendidikan dan bab matematika untuk memulai pertarungan solo.
+      </p>
+
+      <div id="chapters-list-container" style="display: flex; flex-direction: column; gap: 10px;">
+        <!-- Diisi secara dinamis oleh JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- B. Weapon Shop & Gacha Modal -->
+  <div class="modal-overlay" id="shop-modal">
+    <div class="jrpg-window modal-content">
+      <div class="modal-header">
+        <span>🪙 TOKO PERLENGKAPAN & GACHA</span>
+        <span class="modal-close" onclick="closeModal('shop-modal')">✖</span>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 8px;">
+        <span>GOLD ANDA: <b id="shop-gold-text" style="color: var(--text-yellow);">0</b> 💰</span>
+        <span>KELAS: <b id="shop-class-text" style="color: #3b82f6;">N/A</b></span>
+      </div>
+
+      <!-- Tab Toko / Inventori -->
+      <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+        <button class="jrpg-btn" onclick="showShopTab('buy')">BELI PERALATAN</button>
+        <button class="jrpg-btn" onclick="showShopTab('inventory')">INVENTORI ANDA</button>
+        <button class="jrpg-btn" onclick="triggerGachaChest()" style="border-color: var(--text-yellow);">GACHA BOX (30g)</button>
+      </div>
+
+      <div id="shop-buy-tab">
+        <div class="shop-grid" id="shop-items-container">
+          <!-- Diisi dinamis -->
+        </div>
+      </div>
+
+      <div id="shop-inventory-tab" style="display: none;">
+        <div class="shop-grid" id="inventory-items-container">
+          <!-- Diisi dinamis -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C. The Library Modal (Belajar & YouTube) -->
+  <div class="modal-overlay" id="library-modal">
+    <div class="jrpg-window modal-content" style="width: 550px;">
+      <div class="modal-header">
+        <span>📖 PERPUSTAKAAN BELAJAR</span>
+        <span class="modal-close" onclick="closeModal('library-modal')">✖</span>
+      </div>
+      
+      <p style="font-size: 8px; color: var(--text-gray); margin-bottom: 10px;">
+        Pilih tingkat pendidikan di bawah ini untuk melihat video penjelasan YouTube:
+      </p>
+
+      <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: space-between;">
+        <button class="jrpg-btn" onclick="loadLibraryLevel('SD')">MATEMATIKA SD</button>
+        <button class="jrpg-btn" onclick="loadLibraryLevel('SMP')">MATEMATIKA SMP</button>
+        <button class="jrpg-btn" onclick="loadLibraryLevel('SMA')">MATEMATIKA SMA</button>
+        <button class="jrpg-btn" onclick="loadLibraryLevel('College')">KULIAH</button>
+      </div>
+
+      <div id="library-content-area" style="display: none;">
+        <h3 id="library-chapter-name" style="font-size: 9px; color: var(--text-yellow); margin-bottom: 8px;">N/A</h3>
+        
+        <!-- JRPG Tutorial dialog text -->
+        <div class="jrpg-window" style="background: rgba(0,0,0,0.6); font-size: 8px; line-height: 1.6; margin-bottom: 12px;">
+          <span style="color: var(--text-yellow);">TUTORIAL GAMEMASTER:</span><br>
+          <span id="library-text-instruction">Klik video di bawah ini untuk memahami penyelesaian bab! Untuk mengalahkan boss, pastikan Anda mencatat rumus penting agar siap menghadapi efek blind/silence monster.</span>
+        </div>
+
+        <div class="youtube-wrapper">
+          <iframe id="youtube-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- D. Co-Op Tavern Modal -->
+  <div class="modal-overlay" id="tavern-modal">
+    <div class="jrpg-window modal-content">
+      <div class="modal-header">
+        <span>🍻 LOBI CO-OP TAVERN (2-3 SISWA)</span>
+        <span class="modal-close" onclick="closeModal('tavern-modal')">✖</span>
+      </div>
+
+      <div id="tavern-setup-view">
+        <div class="login-input-group">
+          <label for="room-code-input">KODE RUANG PERTARUNGAN (ROOM CODE)</label>
+          <input type="text" id="room-code-input" placeholder="Masukkan 4 digit kode, misal: 9999">
+        </div>
+        <div style="margin-top: 15px; display: flex; gap: 10px;">
+          <button class="jrpg-btn" onclick="joinCoopRoom()" style="flex: 1; justify-content: center;">BERGABUNG ROOM</button>
+        </div>
+      </div>
+
+      <!-- Tampilan di dalam Room multiplayer -->
+      <div id="tavern-room-view" style="display: none;">
+        <h3 style="font-size: 10px; color: var(--text-yellow); margin-bottom: 10px;">
+          ROOM CODE: <span id="active-room-title">N/A</span>
+        </h3>
+        
+        <p style="font-size: 8px; color: var(--text-gray); margin-bottom: 10px;">ANGGOTA TIM (MAKSIMAL 3):</p>
+        <div id="coop-players-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+          <!-- Diisi dinamis -->
+        </div>
+
+        <!-- Chat Lobi Co-Op -->
+        <div class="coop-chat-area" id="coop-chat-box"></div>
+        <div class="coop-chat-input-row">
+          <input type="text" id="coop-chat-input" placeholder="Ketik pesan lobi..." onkeypress="handleChatPress(event)">
+          <button class="jrpg-btn" onclick="sendCoopChatMessage()">KIRIM</button>
+        </div>
+
+        <div style="margin-top: 15px; display: flex; gap: 10px;">
+          <button class="jrpg-btn" id="start-coop-btn" onclick="startCoopBattle()" style="flex: 1; justify-content: center; border-color: var(--text-green);">MULAI RAIDS BOSS</button>
+          <button class="jrpg-btn" onclick="leaveCoopRoom()" style="border-color: var(--text-red);">KELUAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- E. Guild Quest Board Modal -->
+  <div class="modal-overlay" id="guild-modal">
+    <div class="jrpg-window modal-content">
+      <div class="modal-header">
+        <span>📋 GUILD QUEST BOARD</span>
+        <span class="modal-close" onclick="closeModal('guild-modal')">✖</span>
+      </div>
+      
+      <div class="jrpg-window" style="background: rgba(0,0,0,0.6); margin-bottom: 15px; font-size: 8px; line-height: 1.6;">
+        <span style="color: var(--text-yellow);">MISI HARIAN AKTIF:</span><br>
+        <span id="daily-quest-desc">⚔️ Selesaikan 1 bab petualangan apa saja hari ini untuk bonus +50 Gold.</span><br>
+        Status: <b id="daily-quest-status" style="color: var(--text-red);">BELUM SELESAI</b>
+      </div>
+
+      <div class="jrpg-window" style="background: rgba(0,0,0,0.6); font-size: 8px; line-height: 1.6;">
+        <span style="color: var(--text-yellow);">HOURLY EVENTS (EVENT JAM KHUSUS):</span><br>
+        ⏰ Setiap <b style="color: var(--text-yellow);">Jam Genap</b> (Contoh: 14:00, 16:00, 18:00) adalah **Double EXP Hour**!<br>
+        Status Saat Ini: <b id="hourly-event-status" style="color: var(--text-gray);">TIDAK AKTIF</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- F. Redeem Code Modal -->
+  <div class="modal-overlay" id="redeem-modal">
+    <div class="jrpg-window modal-content" style="width: 350px;">
+      <div class="modal-header">
+        <span>🪙 REDEEM SIMULASI TOP-UP</span>
+        <span class="modal-close" onclick="closeModal('redeem-modal')">✖</span>
+      </div>
+      <div class="login-input-group">
+        <label for="redeem-input">KODE REDEEM TOP-UP GRATIS</label>
+        <input type="text" id="redeem-input" placeholder="Masukkan kode, misal: PIXELMATH90">
+      </div>
+      <div style="margin-top: 15px; text-align: center;">
+        <button class="jrpg-btn" onclick="submitRedeemCode()">KLAIM EMAS</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- G. Custom JRPG Dialog Box Modal (Replaces browser alert) -->
+  <div class="modal-overlay" id="dialog-modal" style="z-index: 10000; display: none;">
+    <div class="jrpg-window modal-content" style="width: 420px; max-width: 90%;">
+      <div class="modal-header" id="dialog-title">GAME SYSTEM</div>
+      <div id="dialog-body" style="font-size: 8px; line-height: 1.6; margin-bottom: 20px; min-height: 50px; text-align: left;"></div>
+      <div style="text-align: right;">
+        <button class="jrpg-btn" id="dialog-confirm-btn">LANJUTKAN <span class="jrpg-cursor">▶</span></button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== FRONTEND GAME LOGICS ==================== -->
+  <script src="sound.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

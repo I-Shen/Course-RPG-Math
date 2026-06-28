@@ -1,0 +1,39 @@
+# ── Dependencies (jangan di-upload, terlalu besar) ──────────────
+node_modules/
+.venv_sdxl/
+
+# ── Secrets & Environment Variables ────────────────────────────
+.env
+.env.local
+.env.production
+
+# ── Database lokal (setiap orang punya sendiri) ─────────────────
+db/
+
+# ── Output gambar SDXL (aset mentah, bisa di-generate ulang) ───
+asset_mentah/
+sdxl_output.png
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# ── Log files ───────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Ollama binaries & libraries (download sendiri dari ollama.com) ──
+ollama/lib/
+ollama/ollama.exe
+ollama/models/
+
+# ── OS / Editor files ────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/settings.json
+
+# ── Python cache ─────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo

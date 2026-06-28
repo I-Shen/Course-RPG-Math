@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Gate - Pixel Math RPG</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="portal-container">
+    <div class="portal-bg-effects"></div>
+    <div class="portal-gate" id="portal-gate"></div>
+
+    <div class="jrpg-window login-card" id="login-window">
+      <h1><span class="jrpg-cursor">▶</span> PORTAL GATE <span class="jrpg-cursor">◀</span></h1>
+      
+      <form id="login-form">
+        <div class="login-input-group">
+          <label for="username">USERNAME MURID / GURU</label>
+          <input type="text" id="username" required autocomplete="off" placeholder="Masukkan username...">
+        </div>
+        <div class="login-input-group">
+          <label for="password">PASSWORD KREDENSIAL</label>
+          <input type="password" id="password" required placeholder="Masukkan password...">
+        </div>
+
+        <!-- Bagian Pengaturan Karakter (Muncul jika Murid Baru) -->
+        <div class="char-creation" id="char-creation-section" style="display: none;">
+          <h2 style="font-size: 8px; color: var(--text-yellow); margin-bottom: 10px; text-align: center;">
+            KUSTOMISASI KARAKTER AWAL
+          </h2>
+          
+          <div class="login-input-group">
+            <label>PILIH GENDER</label>
+            <div class="gender-select">
+              <div class="gender-option active" id="gender-male" onclick="selectGender('male')">LAKI-LAKI</div>
+              <div class="gender-option" id="gender-female" onclick="selectGender('female')">PEREMPUAN</div>
+            </div>
+          </div>
+
+          <div class="login-input-group">
+            <label for="char-class">KELAS KARAKTER (JOB CLASS)</label>
+            <select id="char-class">
+              <option value="Warrior">WARRIOR (Damage Fisik +30%)</option>
+              <option value="Mage">MAGE (Sihir Elemen +10%)</option>
+              <option value="Cleric">CLERIC (Penyembuh Tim Co-Op)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <button type="submit" class="jrpg-btn" id="submit-btn" style="width: 100%; justify-content: center;">
+            MASUK PORTAL
+          </button>
+        </div>
+      </form>
+      
+      <div id="error-message" style="color: var(--text-red); font-size: 8px; margin-top: 15px; text-align: center; display: none;"></div>
+    </div>
+  </div>
+
+  <!-- Memuat library synthesizer sound.js -->
+  <script src="sound.js"></script>
+  
+  <script>
+    let selectedGender = 'male';
+    const loginForm = document.getElementById('login-form');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const charSection = document.getElementById('char-creation-section');
+    const errorMsg = document.getElementById('error-message');
+    const submitBtn = document.getElementById('submit-btn');
+
+    // Inisialisasi audio saat interaksi pertama
+    document.body.addEventListener('click', () => {
+      window.audioEngine.init();
+    });
+
+    function selectGender(gender) {
+      window.audioEngine.playBeep();
+      selectedGender = gender;
+      document.getElementById('gender-male').classList.toggle('active', gender === 'male');
+      document.getElementById('gender-female').classList.toggle('active', gender === 'female');
+    }
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      window.audioEngine.playBeep();
+      errorMsg.style.display = 'none';
+
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Gagal masuk portal!");
+        }
+
+        // Tampilkan pesan selamat datang harian jika ada
+        if (data.message) {
+          alert(data.message);
+        }
+
+        const user = data.user;
+
+        if (user.role === 'teacher') {
+          // Arahkan ke dashboard guru
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          window.location.href = 'admin.html';
+        } else {
+          // Siswa: Jika belum memiliki gender/kelas dikonfigurasi (untuk murid baru yang didaftarkan guru)
+          if (!user.stats.gender || !user.stats.charClass || user.stats.charClass === "Warrior" && !charSection.style.display === "block" && user.stats.inventory.length === 0 && user.stats.level === 1 && user.stats.exp === 0) {
+            // Untuk penyesuaian awal kelas karakter
+            if (charSection.style.display === 'none') {
+              charSection.style.display = 'block';
+              submitBtn.innerText = 'KONFIRMASI KARAKTER & MASUK';
+              alert("Kredensial benar! Harap pilih gender dan kelas karakter petualang Anda sebelum masuk kota.");
+              return;
+            }
+            
+            // Simpan gender & class yang dipilih
+            user.stats.gender = selectedGender;
+            user.stats.charClass = document.getElementById('char-class').value;
+            
+            // Simpan perubahan ke backend via API equip/update stats jika diperlukan, 
+            // Untuk mempermudah, kita bisa mengirim update di endpoint answer/rest, tapi di sini 
+            // kita langsung simpan di localStorage dan biarkan client menyinkronkannya ke dashboard utama
+          }
+
+          localStorage.setItem('currentUser', JSON.stringify({
+            username: user.username,
+            role: user.role,
+            stats: {
+              ...user.stats,
+              gender: selectedGender,
+              charClass: document.getElementById('char-class').value
+            }
+          }));
+          
+          // Efek visual portal menyusut dramatis sebelum pindah halaman
+          document.getElementById('portal-gate').style.animation = 'swirlIntro 1s ease-in-out forwards';
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1000);
+        }
+      } catch (err) {
+        errorMsg.innerText = err.message;
+        errorMsg.style.display = 'block';
+        window.audioEngine.playHurt();
+      }
+    });
+  </script>
+</body>
+</html>

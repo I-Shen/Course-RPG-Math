@@ -1,0 +1,578 @@
+const fs = require('fs');
+const path = require('path');
+
+// Tentukan direktori database
+const dbDir = path.join(__dirname, '../db');
+const dbPath = path.join(dbDir, 'database.json');
+
+// Pastikan folder db ada
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
+
+// Inisialisasi Bank Soal Terkurasi
+const initialDatabase = {
+  users: [
+    {
+      username: "guru",
+      password: "guru123",
+      role: "teacher"
+    },
+    {
+      username: "murid1",
+      password: "murid123",
+      role: "student",
+      stats: {
+        level: 1,
+        exp: 0,
+        hp: 100,
+        maxHp: 100,
+        gold: 150, // Diberi modal emas awal untuk mencoba Shop & Gacha
+        gender: "male",
+        charClass: "Warrior",
+        equippedGear: {
+          weapon: "None",
+          hat: "None",
+          armor: "None"
+        },
+        inventory: [],
+        titles: ["Novice Learner"],
+        activeTitle: "Novice Learner",
+        dailyStreak: 1,
+        lastLoginDate: new Date().toISOString().split('T')[0]
+      }
+    }
+  ],
+  chapters: [
+    { id: "ch1", name: "Operasi Dasar Bilangan", level: "SD", youtubeVideoId: "uO_n3i9o0G8" }, // Video Penjumlahan & Pengurangan
+    { id: "ch2", name: "Pecahan Sederhana", level: "SD", youtubeVideoId: "tV9Hek4QoB8" }, // Video Pecahan
+    { id: "ch3", name: "Persamaan Linear Satu Variabel", level: "SMP", youtubeVideoId: "ToxlQ2k2-3s" }, // Aljabar SMP
+    { id: "ch4", name: "Aritmatika Sosial (Diskon & Bunga)", level: "SMP", youtubeVideoId: "XQ2aEskc-uE" },
+    { id: "ch5", name: "Trigonometri Dasar", level: "SMA", youtubeVideoId: "f48uW7l6tE8" },
+    { id: "ch6", name: "Limit & Turunan Fungsi", level: "SMA", youtubeVideoId: "q5tL8BwV69E" },
+    { id: "ch7", name: "Aljabar Linear & Matriks", level: "College", youtubeVideoId: "Hw5aNlIUPnE" },
+    { id: "ch8", name: "Persamaan Diferensial Biasa", level: "College", youtubeVideoId: "nL1y9u1qQhU" }
+  ],
+  questions: [
+    // === CHAPTER 1: SD - Operasi Dasar ===
+    {
+      id: "q1",
+      chapterId: "ch1",
+      level: "SD",
+      question: "Berapakah hasil dari 25 + 18 - 12?",
+      options: ["27", "31", "35", "41"],
+      answer: 1, // "31"
+      explanation: "Langkah: 25 + 18 = 43, lalu 43 - 12 = 31.",
+      difficulty: "easy",
+      timeLimit: 15,
+      typeEffect: "none"
+    },
+    {
+      id: "q2",
+      chapterId: "ch1",
+      level: "SD",
+      question: "Ibu membeli 3 pak buku tulis. Setiap pak berisi 10 buku. Jika Ibu memberikan 8 buku kepada adik, sisa buku Ibu adalah...",
+      options: ["18 buku", "20 buku", "22 buku", "24 buku"],
+      answer: 2, // "22 buku"
+      explanation: "Jumlah buku: 3 x 10 = 30 buku. Dikurangi adik: 30 - 8 = 22 buku.",
+      difficulty: "easy",
+      timeLimit: 20,
+      typeEffect: "none"
+    },
+    {
+      id: "q3",
+      chapterId: "ch1",
+      level: "SD",
+      question: "Jika 15 x A = 90, berapakah nilai A?",
+      options: ["5", "6", "7", "8"],
+      answer: 1, // "6"
+      explanation: "A = 90 / 15 = 6.",
+      difficulty: "medium",
+      timeLimit: 15,
+      typeEffect: "poison" // Monster menyerang dengan racun!
+    },
+    {
+      id: "q4",
+      chapterId: "ch1",
+      level: "SD",
+      question: "Berapakah hasil dari 144 : 12 + 15?",
+      options: ["25", "27", "29", "31"],
+      answer: 1, // "27"
+      explanation: "Lakukan pembagian dulu: 144 : 12 = 12. Lalu tambahkan 15: 12 + 15 = 27.",
+      difficulty: "medium",
+      timeLimit: 15,
+      typeEffect: "none"
+    },
+    {
+      id: "q5",
+      chapterId: "ch1",
+      level: "SD",
+      question: "Boss Battle: Berapakah hasil dari (45 + 55) x (23 - 18)?",
+      options: ["400", "450", "500", "550"],
+      answer: 2, // "500"
+      explanation: "Hitung kurung pertama: 45 + 55 = 100. Kurung kedua: 23 - 18 = 5. Kalikan: 100 x 5 = 500.",
+      difficulty: "hard",
+      timeLimit: 10, // Boss battle waktu sangat singkat!
+      typeEffect: "blind" // Boss menyemburkan asap membutakan!
+    },
+
+    // === CHAPTER 2: SD - Pecahan ===
+    {
+      id: "q6",
+      chapterId: "ch2",
+      level: "SD",
+      question: "Hasil penjumlahan dari 1/4 + 2/4 adalah...",
+      options: ["3/8", "3/4", "1/2", "4/4"],
+      answer: 1, // "3/4"
+      explanation: "Karena penyebutnya sudah sama (4), langsung jumlahkan pembilangnya: 1 + 2 = 3. Hasilnya 3/4.",
+      difficulty: "easy",
+      timeLimit: 15,
+      typeEffect: "none"
+    },
+    {
+      id: "q7",
+      chapterId: "ch2",
+      level: "SD",
+      question: "Bentuk desimal dari pecahan 3/5 adalah...",
+      options: ["0.3", "0.5", "0.6", "0.75"],
+      answer: 2, // "0.6"
+      explanation: "3 dibagi 5 = 0.6. Atau kalikan pembilang dan penyebut dengan 2: 6/10 = 0.6.",
+      difficulty: "easy",
+      timeLimit: 15,
+      typeEffect: "none"
+    },
+    {
+      id: "q8",
+      chapterId: "ch2",
+      level: "SD",
+      question: "Berapakah hasil dari 1/2 + 1/3?",
+      options: ["2/5", "5/6", "3/5", "1/6"],
+      answer: 1, // "5/6"
+      explanation: "Samakan penyebut menjadi 6: 1/2 = 3/6, dan 1/3 = 2/6. Maka 3/6 + 2/6 = 5/6.",
+      difficulty: "medium",
+      timeLimit: 20,
+      typeEffect: "silence" // Monster menyegel petunjuk!
+    },
+    {
+      id: "q9",
+      chapterId: "ch2",
+      level: "SD",
+      question: "Berapakah hasil perkalian pecahan 2/3 x 3/4?",
+      options: ["1/2", "5/12", "6/7", "5/7"],
+      answer: 0, // "1/2"
+      explanation: "Kalikan pembilang dengan pembilang, penyebut dengan penyebut: (2 x 3) / (3 x 4) = 6/12 = 1/2.",
+      difficulty: "medium",
+      timeLimit: 20,
+      typeEffect: "none"
+    },
+    {
+      id: "q10",
+      chapterId: "ch2",
+      level: "SD",
+      question: "Boss Battle: Sederhanakan hasil dari (3/4 - 1/2) : 1/8",
+      options: ["1", "2", "3", "4"],
+      answer: 1, // "2"
+      explanation: "Kurung pertama: 3/4 - 2/4 = 1/4. Lalu 1/4 dibagi 1/8 = 1/4 x 8 = 2.",
+      difficulty: "hard",
+      timeLimit: 12,
+      typeEffect: "blind"
+    },
+
+    // === CHAPTER 3: SMP - Persamaan Linear ===
+    {
+      id: "q11",
+      chapterId: "ch3",
+      level: "SMP",
+      question: "Tentukan nilai x yang memenuhi persamaan x + 7 = 15.",
+      options: ["6", "7", "8", "9"],
+      answer: 2, // "8"
+      explanation: "Pindahkan angka 7 ke ruas kanan: x = 15 - 7 = 8.",
+      difficulty: "easy",
+      timeLimit: 15,
+      typeEffect: "none"
+    },
+    {
+      id: "q12",
+      chapterId: "ch3",
+      level: "SMP",
+      question: "Jika 3x - 5 = 10, berapakah nilai x?",
+      options: ["3", "4", "5", "6"],
+      answer: 2, // "5"
+      explanation: "3x = 10 + 5 => 3x = 15 => x = 15 / 3 = 5.",
+      difficulty: "easy",
+      timeLimit: 20,
+      typeEffect: "none"
+    },
+    {
+      id: "q13",
+      chapterId: "ch3",
+      level: "SMP",
+      question: "Tentukan nilai y dari persamaan 5y + 3 = 2y + 12.",
+      options: ["3", "4", "5", "6"],
+      answer: 0, // "3"
+      explanation: "Kelompokkan variabel y: 5y - 2y = 12 - 3 => 3y = 9 => y = 3.",
+      difficulty: "medium",
+      timeLimit: 25,
+      typeEffect: "poison"
+    },
+    {
+      id: "q14",
+      chapterId: "ch3",
+      level: "SMP",
+      question: "Selesaikan persamaan: 2(x - 3) = 10.",
+      options: ["5", "6", "8", "9"],
+      answer: 2, // "8"
+      explanation: "Buka kurung: 2x - 6 = 10 => 2x = 16 => x = 8.",
+      difficulty: "medium",
+      timeLimit: 20,
+      typeEffect: "none"
+    },
+    {
+      id: "q15",
+      chapterId: "ch3",
+      level: "SMP",
+      question: "Boss Battle: Selesaikan sistem persamaan linear satu variabel: (3x + 9) / 2 = 2x - 1",
+      options: ["10", "11", "12", "13"],
+      answer: 1, // "11"
+      explanation: "Kalikan silang: 3x + 9 = 2(2x - 1) => 3x + 9 = 4x - 2 => 9 + 2 = 4x - 3x => x = 11.",
+      difficulty: "hard",
+      timeLimit: 15,
+      typeEffect: "silence"
+    },
+
+    // === CHAPTER 4: SMP - Aritmatika Sosial ===
+    {
+      id: "q16",
+      chapterId: "ch4",
+      level: "SMP",
+      question: "Budi membeli tas seharga Rp 200.000 dengan diskon 15%. Berapakah uang yang harus dibayar Budi?",
+      options: ["Rp 160.000", "Rp 170.000", "Rp 180.000", "Rp 185.000"],
+      answer: 1, // "Rp 170.000"
+      explanation: "Besar diskon = 15/100 x 200.000 = Rp 30.000. Uang dibayar = 200.000 - 30.000 = Rp 170.000.",
+      difficulty: "easy",
+      timeLimit: 20,
+      typeEffect: "none"
+    },
+    {
+      id: "q17",
+      chapterId: "ch4",
+      level: "SMP",
+      question: "Sebuah toko pakaian membeli baju seharga Rp 80.000 dan menjualnya kembali dengan harga Rp 100.000. Persentase untungnya adalah...",
+      options: ["20%", "25%", "30%", "35%"],
+      answer: 1, // "25%"
+      explanation: "Untung = 100.000 - 80.000 = Rp 20.000. Persentase untung = (20.000 / 80.000) x 100% = 25%.",
+      difficulty: "easy",
+      timeLimit: 20,
+      typeEffect: "none"
+    },
+    {
+      id: "q18",
+      chapterId: "ch4",
+      level: "SMP",
+      question: "Rian menabung di bank sebesar Rp 1.000.000 dengan bunga tunggal 12% per tahun. Berapakah bunga yang didapat Rian setelah 6 bulan?",
+      options: ["Rp 50.000", "Rp 60.000", "Rp 120.000", "Rp 150.000"],
+      answer: 1, // "Rp 60.000"
+      explanation: "Bunga 6 bulan = 6/12 x 12% x 1.000.000 = 6% x 1.000.000 = Rp 60.000.",
+      difficulty: "medium",
+      timeLimit: 25,
+      typeEffect: "blind"
+    },
+    {
+      id: "q19",
+      chapterId: "ch4",
+      level: "SMP",
+      question: "Satu kardus mi instan memiliki bruto 10 kg dan tara 2%. Berapakah nettonya?",
+      options: ["9.2 kg", "9.5 kg", "9.8 kg", "9.9 kg"],
+      answer: 2, // "9.8 kg"
+      explanation: "Tara = 2% x 10 kg = 0.2 kg. Netto = Bruto - Tara = 10 - 0.2 = 9.8 kg.",
+      difficulty: "medium",
+      timeLimit: 20,
+      typeEffect: "none"
+    },
+    {
+      id: "q20",
+      chapterId: "ch4",
+      level: "SMP",
+      question: "Boss Battle: Pak Joko membeli laptop seharga Rp 5.000.000. Jika ia dikenai pajak pertambahan nilai (PPN) sebesar 11%, total bayarnya adalah...",
+      options: ["Rp 5.110.000", "Rp 5.500.000", "Rp 5.550.000", "Rp 5.600.000"],
+      answer: 2, // "Rp 5.550.000"
+      explanation: "PPN = 11% x 5.000.000 = Rp 550.000. Total bayar = 5.000.000 + 550.000 = Rp 5.550.000.",
+      difficulty: "hard",
+      timeLimit: 15,
+      typeEffect: "poison"
+    },
+
+    // === CHAPTER 5: SMA - Trigonometri ===
+    {
+      id: "q21",
+      chapterId: "ch5",
+      level: "SMA",
+      question: "Berapakah nilai dari sin(30 derajat)?",
+      options: ["0", "1/2", "1/2 akar 2", "1/2 akar 3"],
+      answer: 1, // "1/2"
+      explanation: "Berdasarkan nilai sudut istimewa trigonometri kuadran I, sin(30 derajat) = 1/2.",
+      difficulty: "easy",
+      timeLimit: 15,
+      typeEffect: "none"
+    },
+    {
+      id: "q22",
+      chapterId: "ch5",
+      level: "SMA",
+      question: "Berapakah nilai dari cos(90 derajat)?",
+      options: ["0", "1/2", "1", "Tidak terdefinisi"],
+      answer: 0, // "0"
+      explanation: "Cos(90 derajat) = 0.",
+      difficulty: "easy",
+      timeLimit: 15,
+      typeEffect: "none"
+    },
+    {
+      id: "q23",
+      chapterId: "ch5",
+      level: "SMA",
+      question: "Diketahui segitiga siku-siku dengan sisi depan = 3 dan sisi samping = 4. Berapakah nilai dari cos(theta)?",
+      options: ["3/5", "4/5", "3/4", "5/4"],
+      answer: 1, // "4/5"
+      explanation: "Sisi miring = akar(3^2 + 4^2) = 5. Cos = samping/miring = 4/5.",
+      difficulty: "medium",
+      timeLimit: 25,
+      typeEffect: "silence"
+    },
+    {
+      id: "q24",
+      chapterId: "ch5",
+      level: "SMA",
+      question: "Nilai dari tan(135 derajat) adalah...",
+      options: ["-1", "0", "1", "Akar 3"],
+      answer: 0, // "-1"
+      explanation: "135 derajat berada di Kuadran II (nilai tan negatif). tan(135) = tan(180 - 45) = -tan(45) = -1.",
+      difficulty: "medium",
+      timeLimit: 20,
+      typeEffect: "none"
+    },
+    {
+      id: "q25",
+      chapterId: "ch5",
+      level: "SMA",
+      question: "Boss Battle: Gunakan identitas trigonometri untuk menghitung cos(75 derajat)...",
+      options: ["(akar 6 - akar 2)/4", "(akar 6 + akar 2)/4", "(akar 2 - akar 6)/4", "1/2"],
+      answer: 0, // "(akar 6 - akar 2)/4"
+      explanation: "cos(75) = cos(45 + 30) = cos45.cos30 - sin45.sin30 = (1/2 akar 2)(1/2 akar 3) - (1/2 akar 2)(1/2) = (akar 6 - akar 2)/4.",
+      difficulty: "hard",
+      timeLimit: 20,
+      typeEffect: "blind"
+    },
+
+    // === CHAPTER 6: SMA - Limit & Turunan ===
+    {
+      id: "q26",
+      chapterId: "ch6",
+      level: "SMA",
+      question: "Turunan pertama dari f(x) = 5x^3 adalah...",
+      options: ["15x^2", "5x^2", "15x^3", "3x^2"],
+      answer: 0, // "15x^2"
+      explanation: "Rumus turunan kx^n adalah n.k.x^(n-1). Maka 3 x 5 x x^(3-1) = 15x^2.",
+      difficulty: "easy",
+      timeLimit: 15,
+      typeEffect: "none"
+    },
+    {
+      id: "q27",
+      chapterId: "ch6",
+      level: "SMA",
+      question: "Berapakah limit x mendekati 2 untuk fungsi f(x) = 3x^2 - 4?",
+      options: ["4", "6", "8", "10"],
+      answer: 2, // "8"
+      explanation: "Langsung substitusikan x = 2: 3(2^2) - 4 = 3(4) - 4 = 12 - 4 = 8.",
+      difficulty: "easy",
+      timeLimit: 15,
+      typeEffect: "none"
+    },
+    {
+      id: "q28",
+      chapterId: "ch6",
+      level: "SMA",
+      question: "Berapakah limit x mendekati 3 untuk fungsi (x^2 - 9) / (x - 3)?",
+      options: ["0", "3", "6", "Tidak terdefinisi"],
+      answer: 2, // "6"
+      explanation: "Faktorkan pembilang: (x-3)(x+3)/(x-3). Coret (x-3) menghasilkan (x+3). Masukkan x = 3: 3+3 = 6.",
+      difficulty: "medium",
+      timeLimit: 25,
+      typeEffect: "poison"
+    },
+    {
+      id: "q29",
+      chapterId: "ch6",
+      level: "SMA",
+      question: "Turunan pertama dari f(x) = 3x^2 - 4x + 7 adalah...",
+      options: ["6x - 4", "6x + 4", "3x - 4", "6x^2 - 4"],
+      answer: 0, // "6x - 4"
+      explanation: "Turunan 3x^2 = 6x, turunan -4x = -4, turunan 7 = 0. Jadi f'(x) = 6x - 4.",
+      difficulty: "medium",
+      timeLimit: 20,
+      typeEffect: "none"
+    },
+    {
+      id: "q30",
+      chapterId: "ch6",
+      level: "SMA",
+      question: "Boss Battle: Turunan pertama dari f(x) = (2x + 1)(x - 3) pada x = 2 adalah...",
+      options: ["1", "3", "5", "7"],
+      answer: 1, // "3"
+      explanation: "Kalikan dahulu: f(x) = 2x^2 - 6x + x - 3 = 2x^2 - 5x - 3. Turunannya f'(x) = 4x - 5. Pada x = 2: 4(2) - 5 = 3.",
+      difficulty: "hard",
+      timeLimit: 15,
+      typeEffect: "silence"
+    },
+
+    // === CHAPTER 7: College - Matriks ===
+    {
+      id: "q31",
+      chapterId: "ch7",
+      level: "College",
+      question: "Berapakah determinan dari matriks A = [[4, 2], [3, 5]]?",
+      options: ["10", "14", "18", "26"],
+      answer: 1, // "14"
+      explanation: "Determinan = ad - bc = (4 x 5) - (2 x 3) = 20 - 6 = 14.",
+      difficulty: "easy",
+      timeLimit: 20,
+      typeEffect: "none"
+    },
+    {
+      id: "q32",
+      chapterId: "ch7",
+      level: "College",
+      question: "Jika matriks A = [[1, 2], [3, 4]] dan B = [[2, 0], [1, 2]], baris 1 kolom 1 dari matriks hasil perkalian AB adalah...",
+      options: ["4", "5", "6", "8"],
+      answer: 0, // "4"
+      explanation: "Elemen baris 1 kolom 1 = (1 x 2) + (2 x 1) = 2 + 2 = 4.",
+      difficulty: "easy",
+      timeLimit: 20,
+      typeEffect: "none"
+    },
+    {
+      id: "q33",
+      chapterId: "ch7",
+      level: "College",
+      question: "Manakah dari matriks berikut yang merupakan matriks singular (determinannya = 0)?",
+      options: ["[[1, 2], [3, 4]]", "[[2, 4], [3, 6]]", "[[5, 1], [2, 3]]", "[[0, 1], [1, 0]]"],
+      answer: 1, // "[[2, 4], [3, 6]]"
+      explanation: "Det = (2 x 6) - (4 x 3) = 12 - 12 = 0. Matriks singular adalah matriks yang memiliki determinan = 0.",
+      difficulty: "medium",
+      timeLimit: 25,
+      typeEffect: "blind"
+    },
+    {
+      id: "q34",
+      chapterId: "ch7",
+      level: "College",
+      question: "Operasi Baris Elementer (OBE) pada matriks [[1, 3], [2, 8]] dengan mengganti Baris 2 dengan (Baris 2 - 2 x Baris 1) menghasilkan...",
+      options: ["[[1, 3], [0, 2]]", "[[1, 3], [0, 4]]", "[[1, 3], [2, 0]]", "[[1, 3], [0, 0]]"],
+      answer: 0, // "[[1, 3], [0, 2]]"
+      explanation: "B2 baru: [2 - 2(1), 8 - 2(3)] = [0, 2]. Maka matriksnya menjadi [[1, 3], [0, 2]].",
+      difficulty: "medium",
+      timeLimit: 25,
+      typeEffect: "none"
+    },
+    {
+      id: "q35",
+      chapterId: "ch7",
+      level: "College",
+      question: "Boss Battle: Diberikan matriks A = [[1, 2], [3, 5]]. Invers dari matriks A (A^-1) adalah...",
+      options: ["[[-5, 2], [3, -1]]", "[[-5, -2], [-3, -1]]", "[[5, -2], [-3, 1]]", "[[-5, 2], [3, 1]]"],
+      answer: 0, // "[[-5, 2], [3, -1]]"
+      explanation: "Det = 1(5) - 2(3) = -1. Invers = 1/Det x [[d, -b], [-c, a]] = 1/(-1) x [[5, -2], [-3, 1]] = [[-5, 2], [3, -1]].",
+      difficulty: "hard",
+      timeLimit: 30,
+      typeEffect: "poison"
+    },
+
+    // === CHAPTER 8: College - Persamaan Diferensial ===
+    {
+      id: "q36",
+      chapterId: "ch8",
+      level: "College",
+      question: "Manakah yang merupakan solusi umum dari persamaan diferensial terpisah: dy/dx = 3x^2?",
+      options: ["y = x^3 + C", "y = 3x^3 + C", "y = 6x + C", "y = e^(3x) + C"],
+      answer: 0, // "y = x^3 + C"
+      explanation: "Integralkan kedua ruas terhadap x: dy = 3x^2 dx => y = integral(3x^2) dx = x^3 + C.",
+      difficulty: "easy",
+      timeLimit: 20,
+      typeEffect: "none"
+    },
+    {
+      id: "q37",
+      chapterId: "ch8",
+      level: "College",
+      question: "Berapakah orde dari persamaan diferensial (d^2y/dx^2)^3 + dy/dx + y = 0?",
+      options: ["Orde 1", "Orde 2", "Orde 3", "Orde 4"],
+      answer: 1, // "Orde 2"
+      explanation: "Orde dari persamaan diferensial ditentukan oleh turunan tertinggi yang ada pada persamaan tersebut. Turunan tertinggi adalah d^2y/dx^2 (turunan kedua), jadi ordenya adalah 2.",
+      difficulty: "easy",
+      timeLimit: 15,
+      typeEffect: "none"
+    },
+    {
+      id: "q38",
+      chapterId: "ch8",
+      level: "College",
+      question: "Selesaikan persamaan diferensial linear orde satu: dy/dx - 2y = 0.",
+      options: ["y = C.e^(2x)", "y = C.e^(-2x)", "y = C.x^2", "y = 2x + C"],
+      answer: 0, // "y = C.e^(2x)"
+      explanation: "Pisahkan variabel: 1/y dy = 2 dx => ln(y) = 2x + C => y = e^(2x + C) = C.e^(2x).",
+      difficulty: "medium",
+      timeLimit: 25,
+      typeEffect: "silence"
+    },
+    {
+      id: "q39",
+      chapterId: "ch8",
+      level: "College",
+      question: "Persamaan diferensial dy/dx = y/x adalah persamaan diferensial tipe...",
+      options: ["Homogen & Terpisah", "Orde Dua Linear", "Eksak", "Parsial"],
+      answer: 0, // "Homogen & Terpisah"
+      explanation: "Bisa ditulis 1/y dy = 1/x dx (Terpisah) dan fungsi y/x adalah fungsi homogen derajat nol.",
+      difficulty: "medium",
+      timeLimit: 20,
+      typeEffect: "none"
+    },
+    {
+      id: "q40",
+      chapterId: "ch8",
+      level: "College",
+      question: "Boss Battle: Selesaikan masalah nilai batas (IVP): dy/dx = 2x, y(1) = 5. Berapakah nilai fungsi y(x)?",
+      options: ["y = x^2 + 4", "y = x^2 + 5", "y = 2x^2 + 3", "y = x^2 + C"],
+      answer: 0, // "y = x^2 + 4"
+      explanation: "Solusi umum y = x^2 + C. Masukkan nilai batas y(1) = 5 => 1^2 + C = 5 => C = 4. Maka solusi khususnya y = x^2 + 4.",
+      difficulty: "hard",
+      timeLimit: 20,
+      typeEffect: "blind"
+    }
+  ],
+  shopItems: [
+    // Topi
+    { id: "hat1", name: "Straw Hat", cost: 20, type: "hat", colorHex: "#e5c158" },
+    { id: "hat2", name: "Knight Helmet", cost: 60, type: "hat", colorHex: "#8a9597" },
+    { id: "hat3", name: "Wizard Hat", cost: 100, type: "hat", colorHex: "#3f2b96" },
+    // Senjata
+    { id: "wpn1", name: "Wooden Staff", cost: 25, type: "weapon", colorHex: "#a0522d" },
+    { id: "wpn2", name: "Rusty Sword", cost: 50, type: "weapon", colorHex: "#b87333" },
+    { id: "wpn3", name: "Excalibur", cost: 150, type: "weapon", colorHex: "#ffd700" },
+    // Jubah/Baju
+    { id: "arm1", name: "Cloth Robe", cost: 30, type: "armor", colorHex: "#ffffff" },
+    { id: "arm2", name: "Bronze Plate", cost: 80, type: "armor", colorHex: "#cd7f32" },
+    { id: "arm3", name: "Golden Armor", cost: 180, type: "armor", colorHex: "#ffd700" }
+  ],
+  coopRooms: {} // Untuk ruang coop multiplayer real-time
+};
+
+// Tulis ke database.json
+try {
+  fs.writeFileSync(dbPath, JSON.stringify(initialDatabase, null, 2), 'utf-8');
+  console.log(`[SUCCESS] Database seeded successfully at ${dbPath}`);
+  process.exit(0);
+} catch (error) {
+  console.error(`[ERROR] Failed to write database: ${error.message}`);
+  process.exit(1);
+}

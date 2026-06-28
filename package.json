@@ -1,0 +1,17 @@
+{
+  "name": "pixel_math_rpg",
+  "version": "1.0.0",
+  "description": "Pixel-art JRPG 90s style math e-learning web application with real-time Co-Op multiplayer.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node scripts/download_questions.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "ws": "^8.16.0"
+  },
+  "author": "Antigravity Senior IT Consultant & Game Developer",
+  "license": "MIT"
+}
