@@ -38,65 +38,6 @@
     <!-- Map Kota 2D JRPG Town Map (3/4 Orthographic Perspective) -->
     <div class="town-map-wrapper">
       <div class="town-map-plane">
-        
-        <!-- Paved roads/streets to match JRPG screenshot layout -->
-        <div class="town-road horizontal-road" style="top: 55%;"></div>
-        <div class="town-road vertical-road" style="left: 25%;"></div>
-        <div class="town-road vertical-road" style="left: 75%;"></div>
-        
-        <!-- Recessed JRPG River/Canal with brick shadows -->
-        <div class="town-river">
-          <div class="river-bridge" style="left: 25%;"></div>
-          <div class="river-bridge" style="left: 75%;"></div>
-        </div>
-        
-        <!-- White wooden fences to match the screenshot -->
-        <div class="town-fence" style="top: 50%; left: 8%;">🔏🔏🔏</div>
-        <div class="town-fence" style="top: 50%; left: 35%;">🔏🔏🔏</div>
-        <div class="town-fence" style="top: 50%; left: 62%;">🔏🔏🔏</div>
-        
-        <!-- Volumetric 2.5D Trees (Layered Crown & Shadow) -->
-        <div class="jrpg-tree" style="top: 5%; left: 8%;">
-          <div class="tree-shadow"></div>
-          <div class="tree-trunk"></div>
-          <div class="tree-crown"></div>
-        </div>
-        <div class="jrpg-tree" style="top: 15%; left: 18%;">
-          <div class="tree-shadow"></div>
-          <div class="tree-trunk"></div>
-          <div class="tree-crown"></div>
-        </div>
-        <div class="jrpg-tree" style="top: 4%; left: 60%;">
-          <div class="tree-shadow"></div>
-          <div class="tree-trunk"></div>
-          <div class="tree-crown"></div>
-        </div>
-        <div class="jrpg-tree" style="top: 10%; left: 88%;">
-          <div class="tree-shadow"></div>
-          <div class="tree-trunk"></div>
-          <div class="tree-crown"></div>
-        </div>
-        <div class="jrpg-tree" style="top: 75%; left: 5%;">
-          <div class="tree-shadow"></div>
-          <div class="tree-trunk"></div>
-          <div class="tree-crown"></div>
-        </div>
-        <div class="jrpg-tree" style="top: 82%; left: 18%;">
-          <div class="tree-shadow"></div>
-          <div class="tree-trunk"></div>
-          <div class="tree-crown"></div>
-        </div>
-        <div class="jrpg-tree" style="top: 75%; left: 85%;">
-          <div class="tree-shadow"></div>
-          <div class="tree-trunk"></div>
-          <div class="tree-crown"></div>
-        </div>
-
-        <!-- Central fountain -->
-        <div class="town-fountain">
-          <div class="fountain-water"></div>
-        </div>
-
         <!-- NPC Karakter Petualang yang Berjalan (Membuat Kota Ber-Nyawa) -->
         <div class="npc-character npc-warrior" id="npc-moving-1">
           <div class="npc-hair"></div>
@@ -109,80 +50,49 @@
           <div class="npc-body"></div>
         </div>
 
+        <!-- Ancient Runes (Easter Eggs) - Faded math/physics formulas scattered around Solaria -->
+        <div class="ancient-rune" style="top: 48%; left: 36%;" onclick="discoverSecretRune('Pythagoras Rune', 'a² + b² = c²', 'Teorema Pythagoras: Sisi miring kuadrat sama dengan jumlah kuadrat kedua sisi siku-sikunya.')" title="Ukiran Kuno">a²+b²=c²</div>
+        <div class="ancient-rune" style="top: 46%; left: 48%;" onclick="discoverSecretRune('Pi Rune', 'π ≈ 3.14159', 'Konstanta Pi: Perbandingan keliling lingkaran dengan diameternya.')" title="Ukiran Kuno">π</div>
+        <div class="ancient-rune" style="top: 58%; left: 50%;" onclick="discoverSecretRune('Relativity Rune', 'E = mc²', 'Teori Relativitas Khusus: Energi sama dengan massa dikali kuadrat kecepatan cahaya.')" title="Ukiran Kuno">E=mc²</div>
+        <div class="ancient-rune" style="top: 33%; left: 42%;" onclick="discoverSecretRune('Newton Rune', 'F = m · a', 'Hukum Newton II: Gaya yang bekerja pada suatu benda berbanding lurus dengan massa dan percepatannya.')" title="Ukiran Kuno">F=m·a</div>
+        <div class="ancient-rune" style="top: 76%; left: 50%;" onclick="discoverSecretRune('Calculus Rune', '∫ x dx = ½x² + C', 'Integral Tak Tentu: Fondasi utama dalam kalkulus untuk mencari luas di bawah kurva.')" title="Ukiran Kuno">∫</div>
+        <div class="ancient-rune" style="top: 50%; left: 82%;" onclick="discoverSecretRune('Wave Rune', 'λ = h/p', 'Dualitas Partikel-Gelombang De Broglie: Setiap materi memiliki sifat gelombang dengan panjang gelombang berbanding terbalik dengan momentumnya.')" title="Ukiran Kuno">λ=h/p</div>
+
         <!-- BUILDINGS (Gedung Volumetrik JRPG 3/4 Perspective) -->
         
-        <!-- 1. Adventure Gate (Top Center Castle / Istana Kerajaan) -->
+        <!-- 1. Adventure Gate (Bottom Center-Left House) -->
         <div class="building building-adventure" onclick="openAdventureModal()">
-          <div class="jrpg-castle">
-            <div class="castle-towers">
-              <div class="tower left-tower"><div class="tower-roof"></div></div>
-              <div class="tower right-tower"><div class="tower-roof"></div></div>
-            </div>
-            <div class="castle-body">
-              <div class="castle-gate"></div>
-            </div>
-          </div>
-          <div class="building-label">ADVENTURE CASTLE</div>
+          <div class="building-hotspot"></div>
+          <div class="building-label">ADVENTURE HUB</div>
         </div>
 
         <!-- 2. Co-Op Tavern (Center Right Tavern / Kedai Kayu) -->
         <div class="building building-tavern" onclick="openTavernModal()">
-          <div class="jrpg-house tavern-style">
-            <div class="house-roof"></div>
-            <div class="house-body">
-              <div class="house-door"></div>
-              <div class="house-window"></div>
-              <div class="house-sign">🍻</div>
-            </div>
-          </div>
+          <div class="building-hotspot"></div>
           <div class="building-label">CO-OP TAVERN</div>
         </div>
 
         <!-- 3. Shop & Gacha (Bottom Right Shop / Toko Kubah Emas) -->
         <div class="building building-shop" onclick="openShopModal()">
-          <div class="jrpg-house shop-style">
-            <div class="house-roof" style="border-radius: 50% 50% 0 0; background: #e2e8f0;"></div>
-            <div class="house-body" style="background: #fbbf24;">
-              <div class="house-door"></div>
-              <div class="house-window"></div>
-              <div class="house-sign">🪙</div>
-            </div>
-          </div>
+          <div class="building-hotspot"></div>
           <div class="building-label">SHOP & GACHA</div>
         </div>
 
         <!-- 4. Library (Top Left Temple / Kuil Ilmu) -->
         <div class="building building-library" onclick="openLibraryModal()">
-          <div class="jrpg-house library-style">
-            <div class="house-roof" style="background: #3b82f6;"></div>
-            <div class="house-body" style="background: #f1f5f9;">
-              <div class="house-door" style="border-radius: 0;"></div>
-              <div class="house-window"></div>
-              <div class="house-sign">📖</div>
-            </div>
-          </div>
+          <div class="building-hotspot"></div>
           <div class="building-label">THE LIBRARY</div>
         </div>
 
         <!-- 5. Inn (Bottom Left Inn / Rumah Penginapan) -->
         <div class="building building-inn" onclick="restAtInn()">
-          <div class="jrpg-house inn-style">
-            <div class="house-roof"></div>
-            <div class="house-body">
-              <div class="house-door"></div>
-              <div class="house-window"></div>
-              <div class="house-sign">🛌</div>
-            </div>
-          </div>
+          <div class="building-hotspot"></div>
           <div class="building-label">TOWN INN</div>
         </div>
 
         <!-- 6. Guild Quest Board (Center Left Board / Papan Misi) -->
         <div class="building building-guild" onclick="openGuildModal()">
-          <div class="jrpg-board-post">
-            <div class="board-frame">📋</div>
-            <div class="board-legs"></div>
-          </div>
+          <div class="building-hotspot"></div>
           <div class="building-label">GUILD BOARD</div>
         </div>
 

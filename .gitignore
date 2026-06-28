@@ -15,6 +15,7 @@ node_modules/
 asset_mentah/
 sdxl_output.png
 *.png
+!public/solaria_map.png
 *.jpg
 *.jpeg
 *.gif

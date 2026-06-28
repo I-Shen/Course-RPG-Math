@@ -231,24 +231,27 @@ body {
   flex: 1;
   position: relative;
   overflow: hidden;
-  background-color: #1a4314;
+  background-color: #111; /* Dark border surrounding the square JRPG map */
   min-height: 420px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .town-map-plane {
-  position: absolute;
+  position: relative;
   width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background-color: #2e6f40; /* Grass green */
-  background-image: 
-    radial-gradient(circle, transparent 40%, rgba(0, 10, 0, 0.45) 100%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%232e6f40'/%3E%3Crect x='4' y='4' width='2' height='2' fill='%231b4d24'/%3E%3Crect x='16' y='20' width='2' height='2' fill='%231b4d24'/%3E%3Crect x='24' y='8' width='2' height='2' fill='%231b4d24'/%3E%3C/svg%3E");
-  background-size: 32px 32px;
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6);
+  height: auto;
+  max-width: 750px;
+  max-height: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #1a4314;
+  background-image: url('solaria_map.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
   border: 4px solid var(--jrpg-border-color);
-  transform: none; /* Flat 2D Viewport JRPG */
+  box-sizing: border-box;
 }
 
 /* JRPG Town Roads and paths */
@@ -440,19 +443,19 @@ body {
 
 /* Path walking animations */
 @keyframes walkPath1 {
-  0% { left: 35%; top: 56%; }
-  50% { left: 65%; top: 56%; }
-  100% { left: 35%; top: 56%; }
+  0% { left: 15%; top: 56%; }
+  50% { left: 80%; top: 56%; }
+  100% { left: 15%; top: 56%; }
 }
 
 @keyframes walkPath2 {
-  0% { left: 29%; top: 10%; }
-  50% { left: 29%; top: 40%; }
-  100% { left: 29%; top: 10%; }
+  0% { left: 50%; top: 32%; }
+  50% { left: 50%; top: 82%; }
+  100% { left: 50%; top: 32%; }
 }
 
 #npc-moving-1 {
-  animation: walkPath1 8s linear infinite, npcIdle 0.3s infinite alternate;
+  animation: walkPath1 12s linear infinite, npcIdle 0.3s infinite alternate;
 }
 
 #npc-moving-2 {
@@ -464,52 +467,97 @@ body {
   to { transform: translateY(-2px) scaleY(0.95); }
 }
 
-/* Volumetric JRPG Buildings (3/4 Perspective CSS Art) */
+/* Volumetric JRPG Buildings (Dinamis Hotspots untuk Peta SDXL) */
 .building {
   position: absolute;
+  cursor: pointer;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 20;
-  transition: transform 0.2s, filter 0.2s;
+  justify-content: flex-end;
+  box-sizing: border-box;
 }
 
-.building:hover {
-  transform: scale(1.08) translateY(-4px);
-  filter: brightness(1.15);
+/* Hotspot zone representing the house boundaries */
+.building-hotspot {
+  width: 100%;
+  flex: 1;
+  border: 2.5px dashed transparent;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0);
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 4px;
+}
+
+.building:hover .building-hotspot {
+  border-color: var(--text-yellow);
+  background-color: rgba(255, 255, 0, 0.08);
+  box-shadow: 0 0 10px var(--text-yellow);
+}
+
+.building-label {
+  font-family: var(--font-arcade);
+  font-size: 7px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1.5px solid var(--jrpg-border-color);
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-shadow: 1px 1px 0px #000;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+}
+
+.building:hover .building-label {
+  color: var(--text-yellow);
+  border-color: var(--text-yellow);
+  background: var(--jrpg-blue-start);
+  transform: translateY(-2px) scale(1.05);
 }
 
 .building-adventure {
-  top: 5%;
-  left: 50%;
-  margin-left: -50px;
+  left: 27%;
+  top: 56%;
+  width: 18%;
+  height: 22%;
 }
 
 .building-tavern {
-  top: 42%;
-  right: 12%;
+  left: 56%;
+  top: 25%;
+  width: 26%;
+  height: 22%;
 }
 
 .building-shop {
-  bottom: 8%;
-  right: 15%;
+  left: 54%;
+  top: 62%;
+  width: 23%;
+  height: 22%;
 }
 
 .building-library {
-  top: 8%;
-  left: 12%;
+  left: 5%;
+  top: 23%;
+  width: 24%;
+  height: 28%;
 }
 
 .building-inn {
-  bottom: 8%;
-  left: 15%;
+  left: 32%;
+  top: 9%;
+  width: 20%;
+  height: 22%;
 }
 
 .building-guild {
-  top: 42%;
-  left: 12%;
+  left: 5%;
+  top: 56%;
+  width: 15%;
+  height: 20%;
 }
 
 /* CSS Art: Houses */
