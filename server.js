@@ -491,7 +491,8 @@ Format JSON Output:
   };
 
   const callGemini = async () => {
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${geminiKey}`;
+    const geminiModel = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`;
     const body = {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
