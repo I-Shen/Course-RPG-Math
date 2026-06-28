@@ -7,8 +7,9 @@ node_modules/
 .env.local
 .env.production
 
-# ── Database lokal (setiap orang punya sendiri) ─────────────────
-db/
+# ── Database: db/database.json di-upload sebagai starter data
+# Uncomment baris di bawah jika tidak ingin sync db:
+# db/
 
 # ── Output gambar SDXL (aset mentah, bisa di-generate ulang) ───
 asset_mentah/
